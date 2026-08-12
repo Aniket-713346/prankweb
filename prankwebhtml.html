@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>QuickCash ⚡</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #07152f, #1555a5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+.card {
+    width: 100%;
+    max-width: 430px;
+    background: white;
+    border-radius: 25px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.brand {
+    color: #1769ff;
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.badge {
+    display: inline-block;
+    background: #eaf2ff;
+    color: #1769ff;
+    padding: 7px 13px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.icon {
+    width: 82px;
+    height: 82px;
+    margin: auto;
+    background: #20c878;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 43px;
+    animation: pop .7s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+h1 {
+    margin-top: 18px;
+    font-size: 27px;
+    color: #172033;
+}
+
+.sub {
+    color: #707989;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.amount {
+    margin: 23px 0;
+    background: #f0f6ff;
+    border-radius: 18px;
+    padding: 20px 10px;
+}
+
+.amount small {
+    color: #737d8d;
+    font-size: 12px;
+}
+
+.amount h2 {
+    color: #1769ff;
+    font-size: 38px;
+    margin-top: 5px;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.detail {
+    background: #f7f8fa;
+    border-radius: 13px;
+    padding: 12px;
+}
+
+.detail span {
+    display: block;
+    color: #7c8593;
+    font-size: 11px;
+}
+
+.detail strong {
+    display: block;
+    margin-top: 4px;
+}
+
+.timer {
+    background: #fff2dc;
+    color: #d47800;
+    padding: 11px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    border: 0;
+    border-radius: 14px;
+    background: #1769ff;
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+.notice {
+    margin-top: 14px;
+    color: #969eaa;
+    font-size: 10px;
+}
+
+
+/* PROCESSING SCREEN */
+
+#processing,
+#prank {
+    display: none;
+}
+
+.loader {
+    width: 75px;
+    height: 75px;
+    border: 7px solid #e4ecfb;
+    border-top: 7px solid #1769ff;
+    border-radius: 50%;
+    margin: 10px auto 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.processing-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.progress {
+    height: 10px;
+    background: #e7ebf2;
+    border-radius: 20px;
+    margin: 22px 0 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #1769ff;
+    border-radius: 20px;
+    transition: width .4s;
+}
+
+.status {
+    color: #6f7888;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+
+/* PRANK */
+
+.prank-emoji {
+    font-size: 70px;
+    animation: laugh .45s infinite alternate;
+}
+
+@keyframes laugh {
+    from { transform: rotate(-7deg) scale(1); }
+    to { transform: rotate(7deg) scale(1.08); }
+}
+
+.prank-title {
+    color: #ff3b30;
+    font-size: 34px;
+    font-weight: 900;
+    margin-top: 8px;
+}
+
+.prank-text {
+    color: #5e6776;
+    line-height: 1.5;
+    margin: 15px 0 22px;
+}
+
+.prank-message {
+    background: #172033;
+    color: white;
+    border-radius: 15px;
+    padding: 16px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.back {
+    background: #1769ff;
+}
+
+
+/* CONFETTI */
+
+.confetti {
+    position: fixed;
+    top: -20px;
+    width: 9px;
+    height: 14px;
+    z-index: 999;
+    animation: fall 2.5s linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+
+/* BIG APPROVAL */
+
+.big-approval {
+    font-size: 20px;
+    color: #20a866;
+    font-weight: bold;
+    margin-top: 15px;
+    animation: blink .6s infinite alternate;
+}
+
+@keyframes blink {
+    from { opacity: .5; }
+    to { opacity: 1; }
+}
+
+@media(max-width:350px) {
+    .card {
+        padding: 22px 15px;
+    }
+
+    .amount h2 {
+        font-size: 32px;
+    }
+
+    h1 {
+        font-size: 23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MAIN LOAN SCREEN -->
+
+<div class="card" id="loan">
+
+    <div class="brand">QuickCash ⚡</div>
+
+    <div class="badge">
+        FICTIONAL PRANK OFFER
+    </div>
+
+    <div class="icon">✓</div>
+
+    <h1>Congratulations! 🎉</h1>
+
+    <p class="sub">
+        Your completely fictional loan application
+        has been pre-approved.
+    </p>
+
+    <div class="amount">
+        <small>APPROVED AMOUNT</small>
+        <h2>₹50,00,000</h2>
+    </div>
+
+    <div class="details">
+
+        <div class="detail">
+            <span>Interest</span>
+            <strong>0%</strong>
+        </div>
+
+        <div class="detail">
+            <span>Processing Fee</span>
+            <strong>₹0</strong>
+        </div>
+
+        <div class="detail">
+            <span>Approval</span>
+            <strong>Instant ⚡</strong>
+        </div>
+
+        <div class="detail">
+            <span>Credit Score</span>
+            <strong>999 😂</strong>
+        </div>
+
+    </div>
+
+    <div class="timer">
+        Offer expires in <span id="timer">00:30</span>
+    </div>
+
+    <button onclick="startPrank()">
+        💰 CLAIM ₹50 LAKH
+    </button>
+
+    <p class="notice">
+        Fictional prank website — no financial service is provided.
+    </p>
+
+</div>
+
+
+<!-- PROCESSING SCREEN -->
+
+<div class="card" id="processing">
+
+    <div class="brand">QuickCash ⚡</div>
+
+    <div class="loader"></div>
+
+    <div class="processing-title">
+        Processing your ₹50,00,000...
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="status" id="status">
+        Connecting to money printer... 💸
+    </div>
+
+</div>
+
+
+<!-- PRANK SCREEN -->
+
+<div class="card" id="prank">
+
+    <div class="prank-emoji">
+        😂
+    </div>
+
+    <div class="prank-title">
+        GOTCHAAAA!
+    </div>
+
+    <div class="prank-message">
+        Kire patha, khub lobh! 😛
+    </div>
+
+    <p class="prank-text">
+        ₹50 lakh paowar ashay button-e chap diye dile? 😂
+        <br><br>
+        <b>Unfortunately... taka nai! 💀</b>
+        <br>
+        Eta purotai prank chhilo! 😭
+    </p>
+
+    <button class="back" onclick="location.reload()">
+        😎 আবার চেষ্টা কর
+    </button>
+
+    <p class="notice">
+        QUICKCASH PRANK • FICTIONAL WEBSITE
+    </p>
+
+</div>
+
+
+<script>
+
+let seconds = 30;
+
+const timer = setInterval(() => {
+
+    seconds--;
+
+    document.getElementById("timer").textContent =
+        "00:" + String(seconds).padStart(2, "0");
+
+    if (seconds <= 0) {
+        seconds = 30;
+    }
+
+}, 1000);
+
+
+// Start the dramatic fake approval
+
+function startPrank() {
+
+    clearInterval(timer);
+
+    document.getElementById("loan").style.display = "none";
+    document.getElementById("processing").style.display = "block";
+
+    let progress = 0;
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const status =
+        document.getElementById("status");
+
+    const messages = [
+
+        "Checking your imaginary credit score... 🧐",
+
+        "Calling the Money Department... 📞💰",
+
+        "Counting ₹50 lakh... 💵",
+
+        "Printing your imaginary cheque... 🖨️",
+
+        "Almost there... DON'T PANIC 😎",
+
+        "₹50,00,000 is ready!!! 🎉"
+
+    ];
+
+    let step = 0;
+
+    const process = setInterval(() => {
+
+        progress += 20;
+
+        progressBar.style.width = progress + "%";
+
+        if (step < messages.length) {
+            status.textContent = messages[step];
+            step++;
+        }
+
+        if (progress >= 100) {
+
+            clearInterval(process);
+
+            status.innerHTML =
+                "<b>₹50,00,000 APPROVED!!! 🎉</b>";
+
+            setTimeout(showPrank, 1200);
+        }
+
+    }, 700);
+}
+
+
+// Final prank
+
+function showPrank() {
+
+    document.getElementById("processing").style.display = "none";
+    document.getElementById("prank").style.display = "block";
+
+    createConfetti();
+
+    // Wait a tiny moment so the reveal appears first
+    setTimeout(() => {
+
+        if ("speechSynthesis" in window) {
+
+            speechSynthesis.cancel();
+
+            const voice =
+                new SpeechSynthesisUtterance(
+                    "Kire patha, khub lobh!"
+                );
+
+            voice.lang = "bn-IN";
+            voice.rate = 0.85;
+            voice.pitch = 1.15;
+            voice.volume = 1;
+
+            speechSynthesis.speak(voice);
+        }
+
+    }, 500);
+}
+
+
+// Confetti effect
+
+function createConfetti() {
+
+    const pieces = 90;
+
+    for (let i = 0; i < pieces; i++) {
+
+        const confetti =
+            document.createElement("div");
+
+        confetti.className = "confetti";
+
+        confetti.style.left =
+            Math.random() * 100 + "vw";
+
+        confetti.style.animationDelay =
+            Math.random() * 1.5 + "s";
+
+        confetti.style.transform =
+            "rotate(" + Math.random() * 360 + "deg)";
+
+        // Let browser choose the default color
+        confetti.style.backgroundColor =
+            ["#1769ff", "#20c878", "#ffcc00", "#ff3b30"]
+            [Math.floor(Math.random() * 4)];
+
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+            confetti.remove();
+        }, 4000);
+    }
+}
+
+</script>
+
+</body>
+</html>
